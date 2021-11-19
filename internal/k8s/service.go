@@ -45,7 +45,7 @@ func GetServiceAddress(logger *log.Entry, kubeClient kubernetes.Interface, servi
 			}
 
 			if len(lbService.Status.LoadBalancer.Ingress) > 0 {
-				return lbService.Status.LoadBalancer.Ingress[0].IP, nil
+				return lbService.Status.LoadBalancer.Ingress[0].Hostname, nil
 			}
 
 			logger.WithField("svc", svc.Name).

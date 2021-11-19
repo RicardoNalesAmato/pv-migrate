@@ -1,7 +1,6 @@
 package migrator
 
 import (
-	"bytes"
 	_ "embed"
 	"errors"
 	"fmt"
@@ -14,11 +13,6 @@ import (
 	"github.com/utkuozdemir/pv-migrate/migration"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"strings"
-)
-
-var (
-	//go:embed pv-migrate-0.1.0.tgz
-	chartBytes []byte
 )
 
 type strategyMapGetter func(names []string) (map[string]strategy.Strategy, error)
@@ -87,7 +81,7 @@ func (m *migrator) Run(mig *migration.Migration) error {
 }
 
 func (m *migrator) buildTask(mig *migration.Migration) (*task.Task, error) {
-	chart, err := loader.LoadArchive(bytes.NewReader(chartBytes))
+	chart, err := loader.Load("../../helm/pv-migrate")
 	if err != nil {
 		return nil, err
 	}

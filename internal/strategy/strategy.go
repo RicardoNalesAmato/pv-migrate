@@ -157,7 +157,7 @@ func installHelmChart(e *task.Execution, pvcInfo *pvc.Info, values []string) err
 	install.Namespace = pvcInfo.Claim.Namespace
 	install.ReleaseName = e.HelmReleaseName
 	install.Wait = true
-	install.Timeout = 1 * time.Minute
+	install.Timeout = 3 * time.Minute
 
 	t := e.Task
 	vals, err := getMergedHelmValues(values, t.Migration.Options)

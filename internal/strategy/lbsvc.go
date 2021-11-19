@@ -7,6 +7,7 @@ import (
 	"github.com/utkuozdemir/pv-migrate/internal/task"
 	"github.com/utkuozdemir/pv-migrate/internal/util"
 	"strconv"
+	"time"
 )
 
 type LbSvc struct {
@@ -43,15 +44,23 @@ func (r *LbSvc) Run(e *task.Execution) (bool, error) {
 		return true, err
 	}
 
+	t.Logger.Info("Load Balancer Host:", lbSvcAddress)
 	sshTargetHost := formatSSHTargetHost(lbSvcAddress)
+
+	t.Logger.Info("Starting 3 Minute wait...")
+	// Calling Sleep method
+	time.Sleep(3 * time.Minute)
+	t.Logger.Info("Wait Complete!")
 
 	err = installOnDest(e, privateKey, privateKeyMountPath, sshTargetHost)
 	if err != nil {
 		return true, err
 	}
 
+	t.Logger.Info("Installed Helm Chart on Destination...")
+
 	showProgressBar := !e.Task.Migration.Options.NoProgressBar
-	kubeClient := s.ClusterClient.KubeClient
+	kubeClient := d.ClusterClient.KubeClient
 	jobName := e.HelmReleaseName + "-rsync"
 	err = k8s.WaitUntilJobIsCompleted(e.Logger, kubeClient, destNs, jobName, showProgressBar)
 	return true, err
